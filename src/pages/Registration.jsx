@@ -191,45 +191,54 @@ export default function Registration() {
             </div>
 
             {/* LEFT SECTION: President & Info */}
-            <div className="hidden md:flex flex-1 relative z-10 flex-col p-12 lg:p-16 border-r border-white/5 bg-black/20 backdrop-blur-sm h-screen sticky top-0">
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl shadow-white/10 shrink-0">
-                        {/* Fallback to text if image fails, handled cleaner */}
-                        <span className="font-black text-black text-xl">NDC</span>
+            <div className="hidden md:flex flex-1 relative z-10 flex-col p-8 lg:p-12 border-r border-white/5 bg-black/20 backdrop-blur-sm h-screen sticky top-0 overflow-hidden">
+
+                {/* 1. PRESIDENT CARD (Dominant Visual) */}
+                <div className="relative w-full flex-1 rounded-[2.5rem] overflow-hidden group border border-white/10 shadow-2xl">
+                    {/* Background Image */}
+                    <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_Dramani_Mahama_2014.jpg/440px-John_Dramani_Mahama_2014.jpg"
+                        alt="H.E. John Dramani Mahama"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+
+                    {/* Ghana Flag Strip */}
+                    <div className="absolute left-0 top-10 w-16 h-32 z-20 flex flex-col shadow-xl">
+                        <div className="flex-1 bg-red-600"></div>
+                        <div className="flex-1 bg-yellow-400 relative flex items-center justify-center">
+                            <Star className="w-5 h-5 text-black fill-black" />
+                        </div>
+                        <div className="flex-1 bg-green-600"></div>
+                    </div>
+
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90"></div>
+
+                    {/* Content */}
+                    <div className="absolute bottom-0 left-0 w-full p-8 z-30">
+                        <div className="bg-tein-green/90 backdrop-blur-sm px-3 py-1 rounded-full w-fit mb-4 border border-tein-green/50">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-white">Flagbearer</p>
+                        </div>
+
+                        <h2 className="text-4xl lg:text-5xl font-black text-white leading-[0.9] mb-4 tracking-tighter">
+                            H.E. John <br />
+                            Dramani Mahama
+                        </h2>
+
+                        <p className="text-sm text-gray-300 font-medium leading-relaxed max-w-sm border-l-2 border-tein-green pl-4">
+                            "Together, we build the Ghana we want. Join the movement for progress, prosperity, and a better future for all."
+                        </p>
+                    </div>
+                </div>
+
+                {/* 2. FOOTER CARD */}
+                <div className="mt-6 bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/10 flex items-center gap-4 hover:border-tein-red/30 transition-colors group cursor-default">
+                    <div className="w-10 h-10 bg-gradient-to-br from-tein-red to-red-900 rounded-xl flex items-center justify-center shadow-lg shadow-tein-red/20 group-hover:scale-110 transition-transform">
+                        <ShieldCheck className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-white tracking-tighter leading-none">TEIN UCC</h1>
-                        <p className="text-sm text-tein-green font-bold uppercase tracking-widest mt-1">Official Portal</p>
-                    </div>
-                </div>
-
-                {/* Hero Text (Centered) */}
-                <div className="flex-1 flex flex-col justify-center">
-                    <h2 className="text-5xl lg:text-7xl font-black text-white tracking-tighter leading-[0.9] mb-8">
-                        Building the <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-tein-green via-white to-tein-green animate-gradient-x">Future</span>
-                        <br /> Together.
-                    </h2>
-
-                    <p className="text-lg text-gray-400 max-w-md leading-relaxed">
-                        Join the intellectual wing of the NDC at the University of Cape Coast. Verify your membership, pay dues, and access exclusive resources.
-                    </p>
-                </div>
-
-                {/* President Card */}
-                <div className="relative group cursor-default mt-8">
-                    <div className="absolute inset-0 bg-gradient-to-r from-tein-green to-emerald-900 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"></div>
-                    <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-3xl flex items-center gap-6 hover:border-tein-green/30 transition-colors">
-                        <div className="w-20 h-20 rounded-full bg-gray-800 border-2 border-tein-green shadow-lg overflow-hidden relative shrink-0">
-                            {/* Placeholder for JDM Image */}
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_Dramani_Mahama_2014.jpg/440px-John_Dramani_Mahama_2014.jpg" alt="JDM" className="w-full h-full object-cover" />
-                        </div>
-                        <div>
-                            <p className="text-xs text-tein-green font-bold uppercase tracking-widest mb-1">Flagbearer & Leader</p>
-                            <h3 className="text-xl font-black text-white leading-tight">H.E. John Dramani Mahama</h3>
-                            <p className="text-xs text-gray-400 mt-2 italic">"Victory needs every single one of us."</p>
-                        </div>
+                        <h3 className="text-sm font-bold text-white">TEIN-UCC Chapter</h3>
+                        <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Tertiary Education Institutions Network</p>
                     </div>
                 </div>
             </div>

@@ -108,7 +108,7 @@ export default function Renewal() {
 
     // --- RENDER: SEARCH & PAY FORM ---
     return (
-        <div className="min-h-screen bg-[#050505] py-20 px-4 relative overflow-hidden flex flex-col items-center justify-center">
+        <div className="min-h-[100dvh] bg-[#050505] py-20 px-4 relative overflow-hidden flex flex-col items-center justify-center">
 
             {/* Background Effects */}
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>

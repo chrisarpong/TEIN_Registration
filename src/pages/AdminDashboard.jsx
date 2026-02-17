@@ -639,7 +639,7 @@ export default function AdminDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-tein-green/30 flex overflow-hidden relative">
+        <div className="min-h-[100dvh] bg-[#050505] text-gray-200 font-sans selection:bg-tein-green/30 flex overflow-hidden relative">
 
             {/* BACKGROUND SHAPES */}
             <div className="fixed inset-0 pointer-events-none">
@@ -724,7 +724,7 @@ export default function AdminDashboard() {
             )}
 
             {/* MAIN CONTENT */}
-            <div className="flex-1 md:ml-72 p-4 md:p-10 pt-24 md:pt-10 relative z-10 overflow-y-auto h-screen scrollbar-hide">
+            <div className="flex-1 md:ml-72 p-4 md:p-10 pt-24 md:pt-10 relative z-10 overflow-y-auto h-screen scrollbar-hide w-full max-w-[100vw]">
 
                 {/* Header */}
                 <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-6 border-b border-white/5">
