@@ -181,7 +181,7 @@ export default function Registration() {
     }
 
     return (
-        <div className="min-h-screen bg-[#050505] text-gray-200 font-sans selection:bg-tein-green/30 relative overflow-hidden flex flex-col md:flex-row">
+        <div className="min-h-screen pt-20 bg-[#050505] text-gray-200 font-sans selection:bg-tein-green/30 relative overflow-hidden flex flex-col md:flex-row">
 
             {/* Background Effects */}
             <div className="fixed inset-0 pointer-events-none z-0">
@@ -191,7 +191,7 @@ export default function Registration() {
             </div>
 
             {/* LEFT SECTION: President & Info */}
-            <div className="hidden md:flex flex-1 relative z-10 flex-col p-8 lg:p-12 border-r border-white/5 bg-black/20 backdrop-blur-sm h-screen sticky top-0 overflow-hidden">
+            <div className="hidden md:flex flex-1 relative z-10 flex-col p-8 lg:p-12 border-r border-white/5 bg-black/20 backdrop-blur-sm h-[calc(100vh-80px)] sticky top-20 overflow-hidden">
 
                 {/* 1. PRESIDENT CARD (Dominant Visual) */}
                 <div className="relative w-full flex-1 rounded-[2.5rem] overflow-hidden group border border-white/10 shadow-2xl">
