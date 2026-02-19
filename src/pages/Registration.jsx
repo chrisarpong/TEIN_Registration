@@ -144,28 +144,24 @@ export default function Registration() {
             {/* ════════════════════════════════════════════════ */}
             {/* LEFT PANEL — Info / President (hidden on mobile) */}
             {/* ════════════════════════════════════════════════ */}
-            <div className="hidden lg:flex lg:w-[42%] xl:w-[45%] h-full flex-col p-6 pr-3 gap-4 relative z-10">
+            <div className="hidden lg:flex lg:w-1/2 h-full flex-col p-6 pr-3 gap-4 relative z-10">
 
                 {/* President Image Card — fills available space */}
                 <div className="flex-1 relative rounded-2xl overflow-hidden border border-white/[0.08] group min-h-0">
-                    {/* Image */}
+                    {/* ★ President Image — Replace the file at: public/president.jpg */}
                     <img
                         src="/president.jpg"
                         alt="H.E. John Dramani Mahama"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=800&q=80";
-                        }}
+                        className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                     />
 
-                    {/* Ghana flag accent */}
-                    <div className="absolute left-0 top-8 w-10 h-20 z-20 flex flex-col shadow-lg rounded-r-md overflow-hidden">
-                        <div className="flex-1 bg-red-600"></div>
-                        <div className="flex-1 bg-yellow-400 relative flex items-center justify-center">
-                            <Star className="w-3 h-3 text-black fill-black" />
+                    {/* Ghana Flag — clean CSS ribbon */}
+                    <div className="absolute left-0 top-6 z-20 w-8 flex flex-col shadow-md" style={{ height: '54px' }}>
+                        <div className="h-[18px] bg-[#CE1126]"></div>
+                        <div className="h-[18px] bg-[#FCD116] flex items-center justify-center">
+                            <span className="text-[10px] leading-none text-black" style={{ fontFamily: 'serif' }}>★</span>
                         </div>
-                        <div className="flex-1 bg-green-600"></div>
+                        <div className="h-[18px] bg-[#006B3F]"></div>
                     </div>
 
                     {/* Gradient overlay */}
