@@ -231,7 +231,11 @@ export default function Registration() {
                             <p className="text-gray-500 text-xs">Fill in your details to become a comrade.</p>
                         </div>
 
-                        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); initializePayment(handleRegistration); }}>
+                        <form className="space-y-4" onSubmit={(e) => {
+                            e.preventDefault();
+                            // initializePayment(handleRegistration); 
+                            handleRegistration({ reference: 'PAY_LATER_' + Date.now() });
+                        }}>
 
                             {/* Full Name */}
                             <div>
@@ -378,7 +382,7 @@ export default function Registration() {
                                 className="w-full bg-gradient-to-r from-tein-green to-emerald-600 text-white font-bold py-3 rounded-lg text-sm hover:shadow-[0_0_30px_rgba(0,168,89,0.3)] transition-all duration-300 hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 border border-white/10 relative overflow-hidden group"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
-                                    {loading ? 'Processing...' : 'Register'}
+                                    {loading ? 'Registering...' : 'Register Now'}
                                     <ChevronRight className="w-4 h-4" />
                                 </span>
                                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-tein-green opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
