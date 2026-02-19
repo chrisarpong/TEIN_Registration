@@ -10,6 +10,7 @@ import Renewal from './pages/Renewal'
 import Verify from './pages/Verify'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
+import SplashScreen from './components/SplashScreen'
 
 // Navigation Component (Visible on Public Pages Only)
 const Navbar = () => {
@@ -77,9 +78,19 @@ const ProtectedRoute = ({ children }) => {
   return children
 }
 
-function App() {
+function AppContent() {
+  const location = useLocation()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    const timer = setTimeout(() => setLoading(false), 2000)
+    return () => clearTimeout(timer)
+  }, [location])
+
   return (
-    <Router>
+    <>
+      <SplashScreen fadeOut={!loading} />
       <Navbar />
       <Routes>
         {/* Public Routes */}
@@ -98,6 +109,14 @@ function App() {
           }
         />
       </Routes>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }
