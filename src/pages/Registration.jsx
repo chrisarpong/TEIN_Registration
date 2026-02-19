@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { supabase } from '../supabaseClient'
 import { usePaystackPayment } from 'react-paystack'
+import presidentImg from '../assets/1.png'
 import { CheckCircle2, User, Phone, MapPin, School, BookOpen, Fingerprint, Crown, Star, Mail, ShieldCheck, ChevronRight, Upload, Clock, Calendar } from 'lucide-react'
 
 const sendResendEmail = async (memberData, teinId, amount) => {
@@ -167,7 +168,7 @@ export default function Registration() {
                         {/* President image — replace at: public/president.jpg */}
                         <div className="flex-1 relative rounded-xl overflow-hidden min-h-0 mb-4 border border-white/[0.06]">
                             <img
-                                src="/president.jpg"
+                                src={presidentImg}
                                 alt="H.E. John Dramani Mahama"
                                 className="absolute inset-0 w-full h-full object-cover object-top"
                             />
