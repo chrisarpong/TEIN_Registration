@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { usePaystackPayment } from 'react-paystack'
 import presidentImg from '../assets/1.png'
@@ -28,6 +29,7 @@ export default function Registration() {
     const [paymentTier, setPaymentTier] = useState('standard')
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
+    const [registeredMember, setRegisteredMember] = useState(null)
     const [previewUrl, setPreviewUrl] = useState(null)
     const fileInputRef = useRef(null)
 
@@ -82,6 +84,7 @@ export default function Registration() {
             }])
             if (paymentError) throw paymentError
             await sendResendEmail(formData, memberData.tein_id, getAmount() / 100);
+            setRegisteredMember(memberData)
             setSuccess(true)
         } catch (error) { alert('Registration failed: ' + error.message) }
         finally { setLoading(false) }
@@ -97,9 +100,17 @@ export default function Registration() {
                         <CheckCircle2 className="w-12 h-12 text-white" />
                     </div>
                     <h2 className="text-3xl font-black text-white tracking-tight mb-2">Welcome to TEIN!</h2>
-                    <p className="text-gray-400 text-sm mb-8">
+                    <p className="text-gray-400 text-sm mb-4">
                         Your registration was successful. An email receipt has been sent to <span className="text-white font-bold">{formData.email}</span>.
                     </p>
+
+                    {registeredMember && (
+                        <div className="mb-8 p-4 bg-white/5 rounded-xl border border-white/10 animate-pulse">
+                            <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Your TEIN ID</p>
+                            <p className="text-3xl font-mono font-black text-tein-green tracking-wider select-all">{registeredMember.tein_id}</p>
+                            <p className="text-[10px] text-gray-400 mt-2">Please save this ID for future renewals.</p>
+                        </div>
+                    )}
                     <button onClick={() => window.location.reload()} className="w-full py-4 rounded-xl font-bold text-tein-green bg-tein-green/10 hover:bg-tein-green/20 border border-tein-green/20 transition-all">Register Another Member</button>
                 </div>
             </div>
@@ -388,7 +399,9 @@ export default function Registration() {
                                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-tein-green opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                             </button>
 
-                            <p className="text-center text-[10px] text-gray-600 font-medium">Secured by Paystack · Admin Login</p>
+                            <p className="text-center text-[10px] text-gray-600 font-medium">
+                                Secured by Paystack · <Link to="/admin" className="hover:text-tein-green transition-colors">Admin Login</Link>
+                            </p>
                         </form>
                     </div>
                 </div>
