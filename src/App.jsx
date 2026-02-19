@@ -6,6 +6,7 @@ import { GraduationCap } from 'lucide-react'
 
 // Import Pages
 import Registration from './pages/Registration'
+import Renewal from './pages/Renewal'
 import Verify from './pages/Verify'
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
@@ -38,6 +39,12 @@ const Navbar = () => {
             className={`text-xs font-bold px-6 py-2.5 rounded-full transition-all duration-300 ${location.pathname === '/' ? 'bg-tein-green text-white shadow-lg shadow-tein-green/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
             Register
+          </Link>
+          <Link
+            to="/renew"
+            className={`text-xs font-bold px-6 py-2.5 rounded-full transition-all duration-300 ${location.pathname === '/renew' ? 'bg-tein-green text-white shadow-lg shadow-tein-green/20' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            Renew
           </Link>
         </div>
       </div>
@@ -77,6 +84,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Registration />} />
+        <Route path="/renew" element={<Renewal />} />
         <Route path="/verify/:id" element={<Verify />} />
         <Route path="/admin" element={<AdminLogin />} />
 

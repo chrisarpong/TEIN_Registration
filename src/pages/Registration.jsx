@@ -173,15 +173,6 @@ export default function Registration() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
 
-                            {/* Ghana flag ribbon */}
-                            <div className="absolute left-3 top-3 z-20 flex gap-0 rounded overflow-hidden shadow-md">
-                                <div className="w-5 h-4 bg-[#CE1126]"></div>
-                                <div className="w-5 h-4 bg-[#FCD116] flex items-center justify-center">
-                                    <span className="text-[7px] text-black leading-none" style={{ fontFamily: 'serif' }}>★</span>
-                                </div>
-                                <div className="w-5 h-4 bg-[#006B3F]"></div>
-                            </div>
-
                             {/* Date badge */}
                             <div className="absolute right-3 top-3 bg-tein-green/90 backdrop-blur-sm px-2 py-0.5 rounded-md flex items-center gap-1">
                                 <Calendar className="w-3 h-3 text-white" />
