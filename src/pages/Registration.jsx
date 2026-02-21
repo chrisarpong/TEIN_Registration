@@ -151,14 +151,13 @@ export default function Registration() {
             <div className="relative z-10 min-h-screen flex items-center justify-center p-4 pt-24 pb-6">
 
                 {/* ── GLASSMORPHISM CARD ── */}
-                <div className="w-full max-w-[1050px] bg-black/50 backdrop-blur-2xl border border-white/[0.08] rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.7)] flex flex-col lg:flex-row"
-                    style={{ maxHeight: 'calc(100vh - 7rem)' }}
+                <div className="w-full max-w-[1050px] bg-black/50 backdrop-blur-2xl border-0 lg:border lg:border-white/[0.08] lg:rounded-2xl overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.7)] flex flex-col lg:flex-row lg:max-h-[calc(100vh-7rem)]"
                 >
 
                     {/* ═══════════════════════════════════════════ */}
                     {/* LEFT PANEL — Info / Branding                */}
                     {/* ═══════════════════════════════════════════ */}
-                    <div className="lg:w-1/2 bg-gradient-to-br from-black/60 to-black/30 p-6 flex flex-col relative overflow-hidden">
+                    <div className="lg:w-1/2 min-h-[50vh] lg:min-h-0 bg-gradient-to-br from-black/60 to-black/30 p-6 flex flex-col relative overflow-hidden">
 
                         {/* Decorative NDC color bars at top */}
                         <div className="flex h-1 rounded-full overflow-hidden mb-5 opacity-80">
@@ -233,11 +232,20 @@ export default function Registration() {
                     {/* ═══════════════════════════════════════════ */}
                     {/* RIGHT PANEL — Registration Form             */}
                     {/* ═══════════════════════════════════════════ */}
-                    <div className="lg:w-1/2 overflow-y-auto p-5 sm:p-6 bg-white/[0.02]"
-                        style={{ maxHeight: 'calc(100vh - 7rem)' }}
+                    <div className="lg:w-1/2 lg:overflow-y-auto p-5 sm:p-6 bg-white/[0.02] lg:max-h-[calc(100vh-7rem)]"
                     >
-                        {/* Header */}
-                        <div className="mb-5">
+                        {/* Tab Navigation header */}
+                        <div className="flex bg-white/[0.06] p-1 rounded-xl border border-white/[0.1] mb-6 relative z-20">
+                            <Link to="/" className="flex-1 text-center py-2 text-sm font-bold bg-tein-green text-white rounded-lg shadow-md">
+                                Registration
+                            </Link>
+                            <Link to="/renew" className="flex-1 text-center py-2 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                                Renewal
+                            </Link>
+                        </div>
+
+                        {/* Title Header */}
+                        <div className="mb-5 hidden lg:block">
                             <h2 className="text-xl font-black text-white mb-0.5">Register Now</h2>
                             <p className="text-gray-500 text-xs">Fill in your details to become a comrade.</p>
                         </div>
