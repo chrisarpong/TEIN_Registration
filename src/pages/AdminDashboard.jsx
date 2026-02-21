@@ -90,9 +90,10 @@ const PrintableIDCards = ({ members, ref }) => {
 
 
 // --- SUB-COMPONENTS ---
-
 const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
-    const [selectedMembers, setSelectedMembers] = useState([])
+    const [printingMemberId, setPrintingMemberId] = useState(null)
+    const [editingMemberId, setEditingMemberId] = useState(null)
+    const [editForm, setEditForm] = useState({})
     const printRef = useRef()
 
     const filtered = members.filter(m =>
@@ -100,28 +101,54 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
         m.tein_id?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-    const handleSelectAll = (e) => {
-        if (e.target.checked) {
-            setSelectedMembers(filtered.map(m => m.id))
-        } else {
-            setSelectedMembers([])
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this member? This action cannot be undone.")) return;
+        try {
+            const { error } = await supabase.from('members').delete().eq('id', id)
+            if (error) throw error
+            // The Realtime subscription in AdminDashboard will handle updating the list
+        } catch (error) {
+            alert('Error deleting member: ' + error.message)
         }
     }
 
-    const handleSelectMember = (id) => {
-        if (selectedMembers.includes(id)) {
-            setSelectedMembers(selectedMembers.filter(mId => mId !== id))
-        } else {
-            setSelectedMembers([...selectedMembers, id])
+    const startEdit = (member) => {
+        setEditingMemberId(member.id)
+        setEditForm({ full_name: member.full_name, program: member.program, level: member.level, phone: member.phone })
+    }
+
+    const cancelEdit = () => {
+        setEditingMemberId(null)
+        setEditForm({})
+    }
+
+    const handleSaveEdit = async (id) => {
+        try {
+            const { error } = await supabase.from('members').update(editForm).eq('id', id)
+            if (error) throw error
+            setEditingMemberId(null)
+            // The Realtime subscription in AdminDashboard will handle updating the list
+        } catch (error) {
+            alert('Error updating member: ' + error.message)
         }
     }
 
     const handlePrint = useReactToPrint({
         contentRef: printRef,
-        documentTitle: 'TEIN-UCC-IDs'
+        documentTitle: 'TEIN-UCC-ID'
     });
 
-    const membersToPrint = members.filter(m => selectedMembers.includes(m.id))
+    // We only print the member currently selected by the Print action button
+    const membersToPrint = members.filter(m => m.id === printingMemberId)
+
+    // Trigger printing once the state updates and the hidden component renders the member
+    useEffect(() => {
+        if (printingMemberId) {
+            handlePrint()
+            // Reset after printing dialog launches (small delay to ensure render)
+            setTimeout(() => setPrintingMemberId(null), 500)
+        }
+    }, [printingMemberId, handlePrint])
 
     const exportToCSV = () => {
         const headers = "TEIN ID, Name, Program, Level, Phone, Residence\n"
@@ -136,24 +163,14 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
         <div className="bg-white/5 backdrop-blur-2xl rounded-3xl shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] border border-white/10 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-tein-green/10 rounded-full blur-3xl pointer-events-none"></div>
 
-            {/* Hidden Print Component */}
+            {/* Hidden Print Component - Only renders the selected member */}
             <div className="hidden">
                 <PrintableIDCards ref={printRef} members={membersToPrint} />
             </div>
 
             <div className="p-6 border-b border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/5 relative z-10">
                 <div className="flex items-center gap-4 w-full sm:w-auto">
-                    {selectedMembers.length > 0 && (
-                        <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-200">
-                            <span className="bg-tein-green/20 text-tein-green text-xs font-bold px-3 py-1.5 rounded-lg border border-tein-green/20">
-                                {selectedMembers.length} Selected
-                            </span>
-                            <button onClick={() => handlePrint()} className="flex items-center gap-2 px-4 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-lg transition-colors border border-white/10">
-                                <Printer className="w-3 h-3" /> Print IDs
-                            </button>
-                            <button onClick={() => setSelectedMembers([])} className="text-gray-400 hover:text-white text-xs underline">Clear</button>
-                        </div>
-                    )}
+                    {/* Bulk Selection UI Removed */}
                 </div>
 
                 <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
@@ -175,15 +192,7 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
                 <table className={`w-full text-sm text-left text-gray-300 ${compactMode ? 'text-xs' : 'text-sm'}`}>
                     <thead className="bg-black/20 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-white/5">
                         <tr>
-                            <th className="px-6 pl-8 py-4 w-10">
-                                <input
-                                    type="checkbox"
-                                    className="rounded bg-white/10 border-white/20 text-tein-green focus:ring-tein-green focus:ring-offset-0"
-                                    onChange={handleSelectAll}
-                                    checked={filtered.length > 0 && selectedMembers.length === filtered.length}
-                                />
-                            </th>
-                            <th className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>TEIN ID / Status</th>
+                            <th className={`px-6 pl-8 ${compactMode ? 'py-2' : 'py-4'}`}>TEIN ID / Status</th>
                             <th className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>Student Details</th>
                             <th className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>Academic Info</th>
                             <th className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>Contact</th>
@@ -192,36 +201,60 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                         {filtered.map((m) => (
-                            <tr key={m.id} className={`hover:bg-white/5 transition-colors group ${selectedMembers.includes(m.id) ? 'bg-tein-green/5' : ''}`}>
-                                <td className="px-6 pl-8 py-4">
-                                    <input
-                                        type="checkbox"
-                                        className="rounded bg-white/10 border-white/20 text-tein-green focus:ring-tein-green focus:ring-offset-0"
-                                        checked={selectedMembers.includes(m.id)}
-                                        onChange={() => handleSelectMember(m.id)}
-                                    />
-                                </td>
-                                <td className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>
+                            <tr key={m.id} className={`hover:bg-white/5 transition-colors group`}>
+                                <td className={`px-6 pl-8 ${compactMode ? 'py-2' : 'py-4'}`}>
                                     <div className="flex items-center gap-3">
                                         <div className={`w-2 h-2 rounded-full ${m.is_manual ? 'bg-yellow-500 shadow-[0_0_8px_rgba(234,179,8,0.5)]' : 'bg-tein-green shadow-[0_0_8px_rgba(0,168,89,0.5)]'}`}></div>
                                         <span className="font-mono font-bold text-white tracking-wide">{m.tein_id || 'Pending...'}</span>
                                     </div>
                                 </td>
                                 <td className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>
-                                    <div className="font-bold text-white text-base">{m.full_name}</div>
-                                    <div className="text-xs text-gray-500 font-medium">{m.gender}</div>
+                                    {editingMemberId === m.id ? (
+                                        <input className="w-full bg-black/40 border border-tein-green/50 outline-none rounded px-2 py-1 text-white" value={editForm.full_name} onChange={e => setEditForm({ ...editForm, full_name: e.target.value })} />
+                                    ) : (
+                                        <>
+                                            <div className="font-bold text-white text-base">{m.full_name}</div>
+                                            <div className="text-xs text-gray-500 font-medium">{m.gender}</div>
+                                        </>
+                                    )}
                                 </td>
                                 <td className={`px-6 ${compactMode ? 'py-2' : 'py-4'}`}>
-                                    <div className="flex flex-col">
-                                        <span className="text-gray-300 font-medium">{m.program}</span>
-                                        <span className="text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 rounded-full w-fit mt-1 border border-white/5">Level {m.level}</span>
-                                    </div>
+                                    {editingMemberId === m.id ? (
+                                        <div className="flex gap-2">
+                                            <input className="w-2/3 bg-black/40 border border-tein-green/50 outline-none rounded px-2 py-1 text-white text-xs" value={editForm.program} onChange={e => setEditForm({ ...editForm, program: e.target.value })} />
+                                            <input className="w-1/3 bg-black/40 border border-tein-green/50 outline-none rounded px-2 py-1 text-white text-xs" value={editForm.level} onChange={e => setEditForm({ ...editForm, level: e.target.value })} />
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col">
+                                            <span className="text-gray-300 font-medium">{m.program}</span>
+                                            <span className="text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 rounded-full w-fit mt-1 border border-white/5">Level {m.level}</span>
+                                        </div>
+                                    )}
                                 </td>
-                                <td className={`px-6 text-gray-400 font-mono text-xs ${compactMode ? 'py-2' : 'py-4'}`}>{m.phone}</td>
+                                <td className={`px-6 text-gray-400 font-mono text-xs ${compactMode ? 'py-2' : 'py-4'}`}>
+                                    {editingMemberId === m.id ? (
+                                        <input className="w-full bg-black/40 border border-tein-green/50 outline-none rounded px-2 py-1 text-white" value={editForm.phone} onChange={e => setEditForm({ ...editForm, phone: e.target.value })} />
+                                    ) : m.phone}
+                                </td>
                                 <td className={`px-6 text-right pr-8 ${compactMode ? 'py-2' : 'py-4'}`}>
-                                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${m.is_manual ? 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
-                                        {m.is_manual ? 'Manual Entry' : 'Verified'}
-                                    </span>
+                                    {editingMemberId === m.id ? (
+                                        <div className="flex items-center justify-end gap-2">
+                                            <button onClick={() => handleSaveEdit(m.id)} className="px-3 py-1 bg-tein-green/20 text-tein-green hover:bg-tein-green/30 rounded text-xs font-bold transition-colors border border-tein-green/30">Save</button>
+                                            <button onClick={cancelEdit} className="px-3 py-1 bg-gray-500/20 text-gray-400 hover:text-white hover:bg-gray-500/40 rounded text-xs font-bold transition-colors border border-gray-500/30">Cancel</button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-end gap-1 sm:gap-2">
+                                            <button title="Print ID" onClick={() => setPrintingMemberId(m.id)} className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 rounded-lg transition-colors border border-blue-500/20">
+                                                <Printer className="w-4 h-4" />
+                                            </button>
+                                            <button title="Edit Member" onClick={() => startEdit(m)} className="p-2 bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white rounded-lg transition-colors border border-white/10">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                            </button>
+                                            <button title="Delete Member" onClick={() => handleDelete(m.id)} className="p-2 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 rounded-lg transition-colors border border-red-500/20">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                            </button>
+                                        </div>
+                                    )}
                                 </td>
                             </tr>
                         ))}
