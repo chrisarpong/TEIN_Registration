@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, forwardRef } from 'react'
 import { supabase } from '../supabaseClient'
 import { Users, CreditCard, FileText, Search, LogOut, PlusCircle, Download, LayoutDashboard, Menu, X, ShieldCheck, GraduationCap, ChevronRight, Settings, Wifi, UserCircle, Lock, Camera, Monitor, Database, Printer, QrCode } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print'
 import { QRCodeSVG } from 'qrcode.react'
 
 // --- ID CARD COMPONENT (PRINTABLE) ---
-const PrintableIDCards = ({ members, ref }) => {
+const PrintableIDCards = forwardRef(({ members }, ref) => {
     return (
         <div ref={ref} className="p-8 bg-white text-black print:p-0 print:bg-white">
             <style type="text/css" media="print">
@@ -86,11 +86,11 @@ const PrintableIDCards = ({ members, ref }) => {
             </div>
         </div>
     )
-}
+})
 
 
 // --- SUB-COMPONENTS ---
-const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchStats }) => {
+const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchStats, fetchMembers }) => {
     const [printingMemberId, setPrintingMemberId] = useState(null)
     const [editingMemberId, setEditingMemberId] = useState(null)
     const [editForm, setEditForm] = useState({})
@@ -107,6 +107,7 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchSt
             const { error } = await supabase.from('members').delete().eq('id', id)
             if (error) throw error
             if (fetchStats) fetchStats()
+            if (fetchMembers) fetchMembers()
             alert('Member deleted successfully.')
         } catch (error) {
             alert('Deletion failed! Ensure you have enabled DELETE policies in Supabase RLS. Error: ' + error.message)
@@ -129,6 +130,7 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchSt
             if (error) throw error
             setEditingMemberId(null)
             if (fetchStats) fetchStats()
+            if (fetchMembers) fetchMembers()
             alert('Member updated successfully.')
         } catch (error) {
             alert('Update failed! Ensure you have enabled UPDATE policies in Supabase RLS. Error: ' + error.message)
@@ -877,7 +879,7 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
-                {activeTab === 'members' && <MembersTable members={members} searchTerm={searchTerm} setSearchTerm={setSearchTerm} compactMode={compactMode} fetchStats={fetchStats} />}
+                {activeTab === 'members' && <MembersTable members={members} searchTerm={searchTerm} setSearchTerm={setSearchTerm} compactMode={compactMode} fetchStats={fetchStats} fetchMembers={fetchMembers} />}
                 {activeTab === 'manual' && <ManualEntry fetchStats={fetchStats} />}
                 {activeTab === 'settings' && (
                     <SettingsTab
