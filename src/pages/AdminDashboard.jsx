@@ -104,16 +104,12 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchSt
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this member? This action cannot be undone.")) return;
         try {
-            const { error, data } = await supabase.from('members').delete().eq('id', id).select()
+            const { error } = await supabase.from('members').delete().eq('id', id)
             if (error) throw error
-            if (!data || data.length === 0) {
-                alert('Deletion failed! Please ensure you have enabled DELETE policies in your Supabase Row Level Security (RLS) settings.')
-            } else {
-                alert('Member deleted successfully.')
-            }
             if (fetchStats) fetchStats()
+            alert('Member deleted successfully.')
         } catch (error) {
-            alert('Error deleting member: ' + error.message)
+            alert('Deletion failed! Ensure you have enabled DELETE policies in Supabase RLS. Error: ' + error.message)
         }
     }
 
@@ -129,17 +125,13 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchSt
 
     const handleSaveEdit = async (id) => {
         try {
-            const { error, data } = await supabase.from('members').update(editForm).eq('id', id).select()
+            const { error } = await supabase.from('members').update(editForm).eq('id', id)
             if (error) throw error
-            if (!data || data.length === 0) {
-                alert('Update failed! Please ensure you have enabled UPDATE policies in your Supabase Row Level Security (RLS) settings.')
-            } else {
-                alert('Member updated successfully.')
-            }
             setEditingMemberId(null)
             if (fetchStats) fetchStats()
+            alert('Member updated successfully.')
         } catch (error) {
-            alert('Error updating member: ' + error.message)
+            alert('Update failed! Ensure you have enabled UPDATE policies in Supabase RLS. Error: ' + error.message)
         }
     }
 
@@ -154,9 +146,14 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchSt
     // Trigger printing once the state updates and the hidden component renders the member
     useEffect(() => {
         if (printingMemberId) {
-            handlePrint()
-            // Reset after printing dialog launches (small delay to ensure render)
-            setTimeout(() => setPrintingMemberId(null), 500)
+            // Wait for React to render the newly populated `<PrintableIDCards>` component
+            const timer = setTimeout(() => {
+                handlePrint()
+                // Reset after printing dialog launches
+                setPrintingMemberId(null)
+            }, 100)
+
+            return () => clearTimeout(timer)
         }
     }, [printingMemberId, handlePrint])
 
