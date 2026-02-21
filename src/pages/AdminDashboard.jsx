@@ -90,7 +90,7 @@ const PrintableIDCards = ({ members, ref }) => {
 
 
 // --- SUB-COMPONENTS ---
-const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
+const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode, fetchStats }) => {
     const [printingMemberId, setPrintingMemberId] = useState(null)
     const [editingMemberId, setEditingMemberId] = useState(null)
     const [editForm, setEditForm] = useState({})
@@ -104,9 +104,14 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
     const handleDelete = async (id) => {
         if (!window.confirm("Are you sure you want to delete this member? This action cannot be undone.")) return;
         try {
-            const { error } = await supabase.from('members').delete().eq('id', id)
+            const { error, data } = await supabase.from('members').delete().eq('id', id).select()
             if (error) throw error
-            // The Realtime subscription in AdminDashboard will handle updating the list
+            if (!data || data.length === 0) {
+                alert('Deletion failed! Please ensure you have enabled DELETE policies in your Supabase Row Level Security (RLS) settings.')
+            } else {
+                alert('Member deleted successfully.')
+            }
+            if (fetchStats) fetchStats()
         } catch (error) {
             alert('Error deleting member: ' + error.message)
         }
@@ -124,10 +129,15 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
 
     const handleSaveEdit = async (id) => {
         try {
-            const { error } = await supabase.from('members').update(editForm).eq('id', id)
+            const { error, data } = await supabase.from('members').update(editForm).eq('id', id).select()
             if (error) throw error
+            if (!data || data.length === 0) {
+                alert('Update failed! Please ensure you have enabled UPDATE policies in your Supabase Row Level Security (RLS) settings.')
+            } else {
+                alert('Member updated successfully.')
+            }
             setEditingMemberId(null)
-            // The Realtime subscription in AdminDashboard will handle updating the list
+            if (fetchStats) fetchStats()
         } catch (error) {
             alert('Error updating member: ' + error.message)
         }
@@ -275,7 +285,7 @@ const MembersTable = ({ members, searchTerm, setSearchTerm, compactMode }) => {
     )
 }
 
-const ManualEntry = ({ fetchStats }) => {
+const ManualEntry = ({ fetchStats, supabase }) => {
     const [manualForm, setManualForm] = useState({
         full_name: '', program: '', level: '100', constituency: '', residence: '', phone: '', custom_id: ''
     })
@@ -870,7 +880,7 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
-                {activeTab === 'members' && <MembersTable members={members} searchTerm={searchTerm} setSearchTerm={setSearchTerm} compactMode={compactMode} />}
+                {activeTab === 'members' && <MembersTable members={members} searchTerm={searchTerm} setSearchTerm={setSearchTerm} compactMode={compactMode} fetchStats={fetchStats} />}
                 {activeTab === 'manual' && <ManualEntry fetchStats={fetchStats} />}
                 {activeTab === 'settings' && (
                     <SettingsTab
