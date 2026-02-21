@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
-import { usePaystackPayment } from 'react-paystack'
+// import { usePaystackPayment } from 'react-paystack'
 import { Search, CheckCircle2, User, ShieldCheck, ChevronRight, RefreshCw, Loader2, AlertCircle, Clock, MapPin, Calendar } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -34,7 +34,8 @@ export default function Renewal() {
             }
 
             setMember(data)
-        } catch (err) {
+        } catch (error) {
+            console.error('Lookup Error:', error)
             setLookupError('Something went wrong. Please try again.')
         } finally {
             setLoading(false)
@@ -42,14 +43,14 @@ export default function Renewal() {
     }
 
     // ── PAYSTACK CONFIG ──
-    const config = {
-        reference: 'RENEWAL_' + (new Date()).getTime().toString(),
-        email: member?.email || 'renewal@tein-ucc.com',
-        amount: RENEWAL_AMOUNT,
-        publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
-    }
+    // const config = {
+    //     reference: 'RENEWAL_' + (new Date()).getTime().toString(),
+    //     email: member?.email || 'renewal@tein-ucc.com',
+    //     amount: RENEWAL_AMOUNT,
+    //     publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
+    // }
 
-    const initializePayment = usePaystackPayment(config)
+    // const initializePayment = usePaystackPayment(config)
 
     // ── HANDLE SUCCESSFUL PAYMENT ──
     const handleRenewalPayment = async (reference) => {

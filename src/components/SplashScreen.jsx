@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import logo from '../assets/1.png' // Utilizing 1.png per user request
 
 export default function SplashScreen({ fadeOut }) {

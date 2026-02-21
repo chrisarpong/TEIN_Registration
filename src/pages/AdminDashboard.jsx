@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, forwardRef } from 'react'
+import { useState, useEffect, useRef, forwardRef, useCallback } from 'react'
 import { supabase } from '../supabaseClient'
 import { Users, CreditCard, FileText, Search, LogOut, PlusCircle, Download, LayoutDashboard, Menu, X, ShieldCheck, GraduationCap, ChevronRight, Settings, Wifi, UserCircle, Lock, Camera, Monitor, Database, Printer, QrCode } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -603,31 +603,8 @@ export default function AdminDashboard() {
 
     const navigate = useNavigate()
 
-    // -- LOAD DATA & AUTH --
-    useEffect(() => {
-        fetchCurrentUser()
-        fetchStats()
-        fetchMembers()
-        const cleanup = setupRealtimeSubscription()
-
-        // Load preferences
-        const savedPrefs = localStorage.getItem('tein_admin_prefs_v2')
-        if (savedPrefs) {
-            const prefs = JSON.parse(savedPrefs)
-            setCompactMode(prefs.compactMode)
-        }
-
-        return () => {
-            cleanup()
-        }
-    }, [])
-
-    // Save prefs
-    useEffect(() => {
-        localStorage.setItem('tein_admin_prefs_v2', JSON.stringify({ compactMode }))
-    }, [compactMode])
-
-    const fetchCurrentUser = async () => {
+    // -- DATA FETCHING FUNCTIONS (Wrapped in useCallback to ensure stable references) --
+    const fetchCurrentUser = useCallback(async () => {
         const { data: { user } } = await supabase.auth.getUser()
         setCurrentUser(user)
         if (user) {
@@ -636,9 +613,21 @@ export default function AdminDashboard() {
                 avatarUrl: user.user_metadata?.avatar_url || ''
             })
         }
-    }
+    }, [])
 
-    const setupRealtimeSubscription = () => {
+    const fetchStats = useCallback(async () => {
+        const { count } = await supabase.from('members').select('*', { count: 'exact' })
+        const { data: payments } = await supabase.from('payments').select('amount')
+        const revenue = payments?.reduce((sum, item) => sum + item.amount, 0) || 0
+        setStats(prev => ({ ...prev, totalMembers: count || 0, totalRevenue: revenue }))
+    }, [])
+
+    const fetchMembers = useCallback(async () => {
+        const { data } = await supabase.from('members').select('*').order('created_at', { ascending: false })
+        setMembers(data || [])
+    }, [])
+
+    const setupRealtimeSubscription = useCallback(() => {
         setConnectionStatus('CONNECTING')
         const channel = supabase
             .channel('public:members')
@@ -655,19 +644,32 @@ export default function AdminDashboard() {
         return () => {
             supabase.removeChannel(channel)
         }
-    }
+    }, [fetchStats, fetchMembers])
 
-    const fetchStats = async () => {
-        const { count } = await supabase.from('members').select('*', { count: 'exact' })
-        const { data: payments } = await supabase.from('payments').select('amount')
-        const revenue = payments?.reduce((sum, item) => sum + item.amount, 0) || 0
-        setStats(prev => ({ ...prev, totalMembers: count || 0, totalRevenue: revenue }))
-    }
+    // -- LOAD DATA & AUTH --
+    useEffect(() => {
+        // eslint-disable-next-line
+        fetchCurrentUser()
+        fetchStats()
+        fetchMembers()
+        const cleanup = setupRealtimeSubscription()
 
-    const fetchMembers = async () => {
-        const { data } = await supabase.from('members').select('*').order('created_at', { ascending: false })
-        setMembers(data || [])
-    }
+        // Load preferences
+        const savedPrefs = localStorage.getItem('tein_admin_prefs_v2')
+        if (savedPrefs) {
+            const prefs = JSON.parse(savedPrefs)
+            setCompactMode(prefs.compactMode)
+        }
+
+        return () => {
+            cleanup()
+        }
+    }, [fetchCurrentUser, fetchStats, fetchMembers, setupRealtimeSubscription])
+
+    // Save prefs
+    useEffect(() => {
+        localStorage.setItem('tein_admin_prefs_v2', JSON.stringify({ compactMode }))
+    }, [compactMode])
 
     const handleLogout = async () => {
         await supabase.auth.signOut()

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { usePaystackPayment } from 'react-paystack'
+// import { usePaystackPayment } from 'react-paystack'
 import presidentImg from '../assets/1.png'
 import { CheckCircle2, User, Phone, MapPin, School, BookOpen, Fingerprint, Crown, Star, Mail, ShieldCheck, ChevronRight, Upload, Clock, Calendar } from 'lucide-react'
 
@@ -48,13 +48,13 @@ export default function Registration() {
     }
 
     const getAmount = () => paymentTier === 'gold' ? 5000 : 1500
-    const config = {
-        reference: (new Date()).getTime().toString(),
-        email: formData.email || "user@tein-ucc.com",
-        amount: getAmount(),
-        publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
-    }
-    const initializePayment = usePaystackPayment(config)
+    // const config = {
+    //     reference: `TEIN_${new Date().getTime()}`,
+    //     email: formData.email || 'pending@tein.com',
+    //     amount: 3000,
+    //     publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
+    // }
+    // const initializePayment = usePaystackPayment(config)
 
     const handleRegistration = async (reference) => {
         setLoading(true)
@@ -118,9 +118,9 @@ export default function Registration() {
     }
 
     // ── Shared Styles ──
-    const fieldCls = "w-full bg-white/[0.06] border border-white/[0.1] rounded-lg pl-9 pr-3 py-2.5 text-white text-[13px] placeholder-gray-500 focus:outline-none focus:border-tein-green/50 focus:bg-white/[0.08] transition-all font-medium"
-    const fieldNoCls = "w-full bg-white/[0.06] border border-white/[0.1] rounded-lg px-3 py-2.5 text-white text-[13px] placeholder-gray-500 focus:outline-none focus:border-tein-green/50 focus:bg-white/[0.08] transition-all font-medium"
-    const labelCls = "block text-[11px] font-semibold text-gray-400 mb-1"
+    const fieldCls = "w-full bg-white/[0.06] pl-10 pr-4 py-2.5 rounded-lg border border-white/[0.1] text-white text-[13px] placeholder-gray-500 focus:outline-none focus:border-tein-green/50 focus:bg-white/[0.08] transition-all font-medium"
+    // const fieldNoCls = "w-full bg-white/[0.06] border border-white/[0.1] rounded-lg px-3 py-2.5 text-white text-[13px] placeholder-gray-500 focus:outline-none focus:border-tein-green/50 focus:bg-white/[0.08] transition-all font-medium"
+    const labelCls = "block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5"
 
     return (
         <>

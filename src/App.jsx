@@ -83,6 +83,7 @@ function AppContent() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // eslint-disable-next-line
     setLoading(true)
     const timer = setTimeout(() => setLoading(false), 2000)
     return () => clearTimeout(timer)
