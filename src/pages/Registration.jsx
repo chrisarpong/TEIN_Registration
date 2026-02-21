@@ -176,7 +176,7 @@ export default function Registration() {
                         </div>
 
                         {/* President image — replace at: public/president.jpg */}
-                        <div className="flex-1 relative rounded-xl overflow-hidden min-h-0 mb-4 border border-white/[0.06]">
+                        <div className="flex-1 min-h-[350px] lg:min-h-0 relative rounded-xl overflow-hidden mb-4 border border-white/[0.06]">
                             <img
                                 src={presidentImg}
                                 alt="H.E. John Dramani Mahama"
